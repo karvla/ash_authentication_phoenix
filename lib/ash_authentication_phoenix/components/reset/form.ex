@@ -143,6 +143,7 @@ defmodule AshAuthentication.Phoenix.Components.Reset.Form do
         <Input.password_field
           strategy={@strategy}
           form={form}
+          autocomplete="new-password"
           overrides={@overrides}
           gettext_fn={@gettext_fn}
         />

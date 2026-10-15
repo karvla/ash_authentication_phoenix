@@ -148,6 +148,7 @@ defmodule AshAuthentication.Phoenix.Components.Password.RegisterForm do
         <Input.password_field
           strategy={@strategy}
           form={form}
+          autocomplete="new-password"
           overrides={@overrides}
           gettext_fn={@gettext_fn}
         />

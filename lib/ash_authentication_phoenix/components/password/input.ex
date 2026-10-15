@@ -69,6 +69,8 @@ defmodule AshAuthentication.Phoenix.Components.Password.Input do
       Required.
     * `input_type` - Either `:text` or `:email`.
       If not set it will try and guess based on the name of the identity field.
+    * `autocomplete` - The input's `autocomplete` hint for password managers.
+      Defaults to `"username"`.
     * `overrides` - A list of override modules.
     * `gettext_fn` - Optional text translation function.
   """
@@ -77,6 +79,7 @@ defmodule AshAuthentication.Phoenix.Components.Password.Input do
           required(:strategy) => Strategy.t(),
           required(:form) => Form.t(),
           optional(:input_type) => :text | :email,
+          optional(:autocomplete) => String.t(),
           optional(:overrides) => [module],
           optional(:gettext_fn) => {module, atom}
         }) :: Rendered.t() | no_return
@@ -86,6 +89,7 @@ defmodule AshAuthentication.Phoenix.Components.Password.Input do
     assigns =
       assigns
       |> assign(:identity_field, identity_field)
+      |> assign_new(:autocomplete, fn -> "username" end)
       |> assign_new(:overrides, fn -> [AshAuthentication.Phoenix.Overrides.Default] end)
       |> assign_new(:gettext_fn, fn -> nil end)
       |> assign_new(:input_type, fn ->
@@ -114,6 +118,7 @@ defmodule AshAuthentication.Phoenix.Components.Password.Input do
         type: to_string(@input_type),
         class: @input_class,
         phx_debounce: override_for(@overrides, :input_debounce),
+        autocomplete: @autocomplete,
         autofocus: "true",
         placeholder: override_for(@overrides, :identity_input_placeholder)
       )}
@@ -132,6 +137,9 @@ defmodule AshAuthentication.Phoenix.Components.Password.Input do
     * `strategy` - The configuration map as per
       `AshAuthentication.authenticated_resources/1`.  Required.
     * `form` - An `AshPhoenix.Form`.  Required.
+    * `autocomplete` - The input's `autocomplete` hint for password managers.
+      Defaults to `"current-password"`; use `"new-password"` where a password
+      is being chosen.
     * `overrides` - A list of override modules.
     * `gettext_fn` - Optional text translation function.
   """
@@ -139,6 +147,7 @@ defmodule AshAuthentication.Phoenix.Components.Password.Input do
           required(:socket) => Socket.t(),
           required(:strategy) => Strategy.t(),
           required(:form) => Form.t(),
+          optional(:autocomplete) => String.t(),
           optional(:overrides) => [module],
           optional(:gettext_fn) => {module, atom}
         }) :: Rendered.t() | no_return
@@ -148,6 +157,7 @@ defmodule AshAuthentication.Phoenix.Components.Password.Input do
     assigns =
       assigns
       |> assign(:password_field, password_field)
+      |> assign_new(:autocomplete, fn -> "current-password" end)
       |> assign_new(:overrides, fn -> [AshAuthentication.Phoenix.Overrides.Default] end)
       |> assign_new(:gettext_fn, fn -> nil end)
       |> assign_new(:input_class, fn ->
@@ -170,6 +180,7 @@ defmodule AshAuthentication.Phoenix.Components.Password.Input do
         overrides={@overrides}
         gettext_fn={@gettext_fn}
         toggle_button={true}
+        autocomplete={@autocomplete}
         also_toggle_id={
           if @strategy.confirmation_required?,
             do: input_id(@form, @strategy.password_confirmation_field)
@@ -190,6 +201,8 @@ defmodule AshAuthentication.Phoenix.Components.Password.Input do
     * `strategy` - The configuration map as per
       `AshAuthentication.authenticated_resources/1`.  Required.
     * `form` - An `AshPhoenix.Form`.  Required.
+    * `autocomplete` - The input's `autocomplete` hint for password managers.
+      Defaults to `"new-password"`.
     * `overrides` - A list of override modules.
     * `gettext_fn` - Optional text translation function.
   """
@@ -197,6 +210,7 @@ defmodule AshAuthentication.Phoenix.Components.Password.Input do
           required(:socket) => Socket.t(),
           required(:strategy) => Strategy.t(),
           required(:form) => Form.t(),
+          optional(:autocomplete) => String.t(),
           optional(:overrides) => [module],
           optional(:gettext_fn) => {module, atom}
         }) :: Rendered.t() | no_return
@@ -206,6 +220,7 @@ defmodule AshAuthentication.Phoenix.Components.Password.Input do
     assigns =
       assigns
       |> assign(:password_confirmation_field, password_confirmation_field)
+      |> assign_new(:autocomplete, fn -> "new-password" end)
       |> assign_new(:overrides, fn -> [AshAuthentication.Phoenix.Overrides.Default] end)
       |> assign_new(:gettext_fn, fn -> nil end)
       |> assign_new(:input_class, fn ->
@@ -231,6 +246,7 @@ defmodule AshAuthentication.Phoenix.Components.Password.Input do
         overrides={@overrides}
         gettext_fn={@gettext_fn}
         toggle_button={false}
+        autocomplete={@autocomplete}
       />
       <.error form={@form} field={@password_confirmation_field} overrides={@overrides} />
     </div>
@@ -415,7 +431,8 @@ defmodule AshAuthentication.Phoenix.Components.Password.Input do
           id: @input_id,
           class: @input_class,
           value: input_value(@form, @field),
-          phx_debounce: override_for(@overrides, :input_debounce)
+          phx_debounce: override_for(@overrides, :input_debounce),
+          autocomplete: @autocomplete
         )}
         <button
           :if={@toggle_button}
@@ -472,7 +489,8 @@ defmodule AshAuthentication.Phoenix.Components.Password.Input do
       {password_input(@form, @field,
         class: @input_class,
         value: input_value(@form, @field),
-        phx_debounce: override_for(@overrides, :input_debounce)
+        phx_debounce: override_for(@overrides, :input_debounce),
+        autocomplete: @autocomplete
       )}
     <% end %>
     """
